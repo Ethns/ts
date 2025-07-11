@@ -11,7 +11,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'ethns.github.io', // 允许所有前端连接（也可以限制为你的 github.io 域名）
+    origin: 'github.io', // 允许所有前端连接（也可以限制为你的 github.io 域名）
   },
 });
 
