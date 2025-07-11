@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: '*',
+        origin: 'https://ethns.github.io',
         methods: ['GET', 'POST']
     },
 });
