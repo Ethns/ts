@@ -5,7 +5,7 @@ const { Server } = require('socket.io');
 
 const app = express();
 app.get('/', (req, res) => {
-  res.send('✅ Tetris WebSocket 服务运行中！');
+  res.send('俄罗斯方块后端服务器运行中！');
 });
 const server = http.createServer(app);
 
