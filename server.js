@@ -40,6 +40,11 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
+// 打印所有请求的 Origin
+app.use((req, res, next) => {
+  console.log(`[请求] Origin: ${req.headers.origin} | Path: ${req.path}`);
+  next();
+});
 server.listen(PORT, () => {
   console.log(`服务器已启动: http://localhost:${PORT}`);
 });
