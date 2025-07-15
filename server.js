@@ -21,43 +21,34 @@ const io = new Server(server, {
     },
 });
 
-const waitingPlayers = []; // 存储等待匹配的 { socket, name }
 // 房间机制
 io.on('connection', (socket) => {
     const origin = socket.handshake.headers.origin;
     console.log(`[Socket连接] Origin: ${origin}, ${socket.id}`);
 
-    socket.on('joinQueue', ({ name }) => {
-    console.log(`[匹配] ${name} 请求加入队列`);
+    socket.on('joinRoom', ({ name, roomId }) => {
+    console.log(`[加入房间] 用户 ${name} 请求加入房间 ${roomId}`);
 
-    if (waitingPlayers.length > 0) {
-        const opponent = waitingPlayers.shift(); // 拿出排队最久的
-        const roomId = `room-${opponent.socket.id}-${socket.id}`;
+    socket.join(roomId);
 
-        // 让双方加入同一个房间
-        opponent.socket.join(roomId);
-        socket.join(roomId);
+    if (!roomUsers[roomId]) {
+        roomUsers[roomId] = [];
+    }
 
-        console.log(`[房间] 配对成功：${opponent.name} vs ${name} → ${roomId}`);
+    roomUsers[roomId].push({ socket, name });
 
-        // 通知双方
-        opponent.socket.emit('matchFound', {
-        roomId,
-        opponent: name
-        });
+    if (roomUsers[roomId].length === 2) {
+        const [player1, player2] = roomUsers[roomId];
 
-        socket.emit('matchFound', {
-        roomId,
-        opponent: opponent.name
-        });
+        // 通知两人匹配成功
+        player1.socket.emit('matchSuccess', { opponent: player2.name });
+        player2.socket.emit('matchSuccess', { opponent: player1.name });
 
+        console.log(`[房间 ${roomId}] 对战开始：${player1.name} vs ${player2.name}`);
     } else {
-        // 没有其他玩家，当前玩家加入等待队列
-        waitingPlayers.push({ socket, name });
-        console.log(`[匹配] ${name} 正在等待配对...`);
+        console.log(`[房间 ${roomId}] 等待第二位玩家...`);
     }
     });
-
 
     socket.on('gameUpdate', (data) => {
         socket.to(data.roomId).emit('opponentUpdate', data);
