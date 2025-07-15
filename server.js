@@ -20,7 +20,7 @@ const io = new Server(server, {
         methods: ['GET', 'POST']
     },
 });
-
+const roomUsers = {};
 // 房间机制
 io.on('connection', (socket) => {
     const origin = socket.handshake.headers.origin;
