@@ -41,8 +41,8 @@ io.on('connection', (socket) => {
             const [player1, player2] = roomUsers[roomId];
 
             // 通知两人匹配成功
-            player1.socket.emit('matchSuccess', { opponent: player2.name });
-            player2.socket.emit('matchSuccess', { opponent: player1.name });
+            player1.socket.emit('matchSuccess', { opponent: player2.name, roomId: roomId});
+            player2.socket.emit('matchSuccess', { opponent: player1.name, roomId: roomId });
 
             console.log(`[房间 ${roomId}] 对战开始：${player1.name} vs ${player2.name}`);
         } else {
